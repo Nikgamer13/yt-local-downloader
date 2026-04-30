@@ -1,0 +1,7 @@
+.venv/
+downloads/
+backups/
+__pycache__/
+*.pyc
+.env
+.last_ytdlp_update
