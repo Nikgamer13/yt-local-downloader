@@ -2,155 +2,41 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Media Local Downloader</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 820px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #111;
-      color: #eee;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
-
-    form, .panel {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      background: #1c1c1c;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    label {
-      font-weight: bold;
-    }
-
-    input, select, button {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-    }
-
-    input {
-      width: 100%;
-    }
-
-    select {
-      width: 100%;
-      max-width: 420px;
-    }
-
-    button {
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .button-row button {
-      flex: 1;
-      min-width: 220px;
-    }
-
-    #status, #toolStatus {
-      padding: 15px;
-      background: #1c1c1c;
-      border-radius: 12px;
-      min-height: 24px;
-      margin-bottom: 20px;
-    }
-
-    .hint {
-      color: #bbb;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .info-box {
-      background: #111;
-      border-radius: 10px;
-      padding: 12px;
-      line-height: 1.6;
-    }
-
-    .backup-item {
-      background: #111;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 10px;
-      line-height: 1.6;
-    }
-
-    .backup-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .backup-actions button,
-    .backup-actions a {
-      flex: 1;
-      min-width: 150px;
-      text-align: center;
-    }
-
-    a {
-      color: #7ab7ff;
-      word-break: break-all;
-    }
-
-    .link-button {
-      display: inline-block;
-      background: #eee;
-      color: #111;
-      text-decoration: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/styles.css" />
 </head>
 
 <body>
-  <h1>Media Local Downloader</h1>
+  <header class="card">
+    <h1>Media Local Downloader</h1>
+    <p class="subtitle">
+      Descarga, administra y respalda contenido multimedia usando yt-dlp en local.
+    </p>
+
+    <div class="compatibility-strip">
+      <span class="badge">YouTube</span>
+      <span class="badge">Instagram</span>
+      <span class="badge">TikTok</span>
+      <span class="badge">X / Twitter</span>
+    </div>
+
+    <p class="badge-note">
+      Compatibilidad común basada en yt-dlp. Algunos enlaces pueden requerir login,
+      estar restringidos o dejar de funcionar si el sitio cambia.
+    </p>
+  </header>
 
   <form id="downloadForm">
+    <div class="form-header">
+      <h2>Descargar contenido</h2>
+      <p>
+        Pega un link compatible, elige formato y descarga en la carpeta local del proyecto.
+      </p>
+    </div>
+
     <div class="field">
-      <label for="url">Link del video:</label>
+      <label for="url">Link del video</label>
       <input
         id="url"
         type="url"
@@ -161,15 +47,15 @@
     </div>
 
     <div class="field">
-      <label for="mode">Formato:</label>
+      <label for="mode">Formato</label>
       <select id="mode" name="mode">
         <option value="audio">Audio MP3</option>
         <option value="video">Video MP4</option>
       </select>
     </div>
 
-    <div class="field" id="qualityField" style="display: none;">
-      <label for="quality">Calidad del video:</label>
+    <div class="field hidden" id="qualityField">
+      <label for="quality">Calidad del video</label>
       <select id="quality" name="quality">
         <option value="144">144p - ultra liviano</option>
         <option value="240">240p - muy liviano</option>
@@ -181,15 +67,17 @@
       </select>
 
       <div class="hint">
-        Si la calidad elegida no existe, la app descargará una versión disponible y luego la comprimirá con FFmpeg.
-        Para IA general, 480p suele ser buen balance. Para texto/código/subtítulos, mejor 720p.
+        Si la calidad exacta no existe, la app descargará una versión disponible y luego la comprimirá con FFmpeg.
+        Para análisis general por IA, 480p suele ser buen balance. Para texto, subtítulos o pantalla de PC, mejor 720p.
       </div>
     </div>
 
-    <button type="submit">Descargar</button>
+    <button class="button-primary" type="submit">Descargar</button>
   </form>
 
-  <div id="status">Esperando link...</div>
+  <div id="status">
+    Esperando link...
+  </div>
 
   <section class="panel">
     <h2>Herramientas de yt-dlp</h2>
@@ -198,35 +86,40 @@
       Cargando información...
     </div>
 
-    <div class="button-row">
-      <button id="updateButton" type="button">
-        Actualizar yt-dlp ahora
+    <div class="button-row" style="margin-top: 16px;">
+      <button id="updateButton" class="button-warning" type="button">
+        Buscar / actualizar yt-dlp
       </button>
 
-      <button id="backupButton" type="button">
+      <button id="backupButton" class="button-secondary" type="button">
         Crear respaldo .zip
       </button>
 
-      <button id="openBackupFolderButton" type="button">
+      <button id="openBackupFolderButton" class="button-secondary" type="button">
         Abrir carpeta backups
       </button>
     </div>
 
-    <div class="hint">
-      El respaldo se guarda dentro de la carpeta del proyecto en <strong>backups/</strong>.
-      El botón de descarga solo crea una copia extra en tu carpeta de descargas.
+    <div class="hint" style="margin-top: 14px;">
+      El respaldo se guarda dentro del proyecto en <strong>backups/</strong>.
+      La actualización manual es más segura para no romper una versión que ya funciona.
     </div>
   </section>
 
   <section class="panel">
     <h2>Respaldos guardados</h2>
-
-    <div id="backupList">
+    <div id="backupList" class="backup-list">
       Cargando respaldos...
     </div>
   </section>
 
-  <div id="toolStatus">Sin acciones pendientes.</div>
+  <div id="toolStatus">
+    Sin acciones pendientes.
+  </div>
+
+  <p class="footer-note">
+    Proyecto local · FastAPI + yt-dlp + FFmpeg
+  </p>
 
   <script>
     const form = document.getElementById("downloadForm");
@@ -255,58 +148,102 @@
 
     function updateQualityVisibility() {
       if (modeSelect.value === "video") {
-        qualityField.style.display = "flex";
+        qualityField.classList.remove("hidden");
       } else {
-        qualityField.style.display = "none";
+        qualityField.classList.add("hidden");
       }
     }
 
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function waitForServerAndReload() {
+      await sleep(4000);
+
+      for (let attempt = 1; attempt <= 30; attempt++) {
+        try {
+          const response = await fetch("/ytdlp-info?nocache=" + Date.now(), {
+            cache: "no-store"
+          });
+
+          if (response.ok) {
+            toolStatus.innerHTML = `
+              <span class="status-good">Servidor reiniciado correctamente.</span><br>
+              Recargando esta pestaña...
+            `;
+
+            setTimeout(() => {
+              window.location.replace("/");
+            }, 800);
+
+            return;
+          }
+        } catch (error) {
+        }
+
+        toolStatus.innerHTML = `
+          <span class="status-warning">Reiniciando servidor...</span><br>
+          Intento ${attempt}/30
+        `;
+
+        await sleep(1000);
+      }
+
+      toolStatus.innerHTML = `
+        <span class="status-danger">No pude reconectar automáticamente.</span><br>
+        Presiona F5 o abre nuevamente la app con el acceso directo.
+      `;
+    }
+
     async function loadYtdlpInfo() {
-    try {
+      try {
         const response = await fetch("/ytdlp-info");
         const result = await response.json();
 
         let updateText = "";
 
         if (result.update_available) {
-        updateText = `
+          updateText = `
             <br>
-            <strong style="color: #ffd36a;">
-            Actualización disponible: ${result.latest_version}
-            </strong>
-        `;
+            <span class="status-warning">
+              Actualización disponible: ${result.latest_version}
+            </span>
+          `;
 
-        updateButton.textContent = `Actualizar a ${result.latest_version} y reiniciar`;
+          updateButton.textContent = `Actualizar a ${result.latest_version}`;
         } else if (result.latest_version === "No se pudo comprobar") {
-        updateText = `
+          updateText = `
             <br>
-            <strong style="color: #ff9f9f;">
-            No se pudo comprobar si hay actualización.
-            </strong>
-        `;
+            <span class="status-danger">
+              No se pudo comprobar si hay actualización.
+            </span>
+          `;
 
-        updateButton.textContent = "Actualizar yt-dlp ahora";
+          updateButton.textContent = "Actualizar yt-dlp ahora";
         } else {
-        updateText = `
+          updateText = `
             <br>
-            <strong style="color: #9dffb0;">
-            yt-dlp está actualizado.
-            </strong>
-        `;
+            <span class="status-good">
+              yt-dlp está actualizado.
+            </span>
+          `;
 
-        updateButton.textContent = "Reinstalar / actualizar yt-dlp";
+          updateButton.textContent = "Reinstalar / actualizar yt-dlp";
         }
 
         ytdlpInfo.innerHTML = `
-        <strong>Versión instalada:</strong> ${result.version}<br>
-        <strong>Última disponible:</strong> ${result.latest_version}<br>
-        <strong>Modo:</strong> ${result.mode}<br>
-        <strong>Auto-update:</strong> ${result.auto_update ? "Activado" : "Desactivado"}
-        ${updateText}
+          <strong>Versión instalada:</strong> ${result.version}<br>
+          <strong>Última disponible:</strong> ${result.latest_version}<br>
+          <strong>Modo:</strong> ${result.mode}<br>
+          <strong>Auto-update:</strong> ${result.auto_update ? "Activado" : "Desactivado"}
+          ${updateText}
         `;
-    } catch (error) {
-        ytdlpInfo.textContent = "No se pudo cargar la información de yt-dlp.";
-    }
+      } catch (error) {
+        ytdlpInfo.innerHTML = `
+          <span class="status-danger">No se pudo cargar la información de yt-dlp.</span>
+        `;
+      }
     }
 
     async function loadBackups() {
@@ -316,8 +253,8 @@
 
         if (!result.backups || result.backups.length === 0) {
           backupList.innerHTML = `
-            <div class="hint">
-              Todavía no hay respaldos guardados.
+            <div class="backup-item">
+              <div class="backup-meta">Todavía no hay respaldos guardados.</div>
             </div>
           `;
           return;
@@ -325,20 +262,22 @@
 
         backupList.innerHTML = result.backups.map((backup) => `
           <div class="backup-item">
-            <strong>${backup.filename}</strong><br>
-            Tamaño: ${backup.size_mb} MB<br>
-            Modificado: ${backup.modified}
+            <div class="backup-item-title">${backup.filename}</div>
+            <div class="backup-meta">
+              Tamaño: ${backup.size_mb} MB<br>
+              Modificado: ${backup.modified}
+            </div>
 
             <div class="backup-actions">
               <a class="link-button" href="${backup.download_url}">
                 Descargar copia
               </a>
 
-              <button type="button" data-restore="${backup.filename}">
+              <button type="button" class="button-secondary" data-restore="${backup.filename}">
                 Restaurar este respaldo
               </button>
 
-              <button type="button" data-delete="${backup.filename}">
+              <button type="button" class="button-danger" data-delete="${backup.filename}">
                 Eliminar
               </button>
             </div>
@@ -346,7 +285,33 @@
         `).join("");
 
       } catch (error) {
-        backupList.textContent = "No se pudieron cargar los respaldos.";
+        backupList.innerHTML = `
+          <div class="backup-item">
+            <div class="backup-meta">No se pudieron cargar los respaldos.</div>
+          </div>
+        `;
+      }
+    }
+
+    async function openDownloadsFolder() {
+      try {
+        const response = await fetch("/open-download-folder", {
+          method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.detail || "Error desconocido");
+        }
+
+        toolStatus.innerHTML = `<span class="status-good">${result.message}</span>`;
+
+      } catch (error) {
+        toolStatus.innerHTML = `
+          <span class="status-danger">Error abriendo carpeta downloads:</span><br>
+          ${error.message}
+        `;
       }
     }
 
@@ -358,7 +323,10 @@
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      statusBox.textContent = "Descargando... no cierres esta pestaña. Si elegiste una calidad baja que no existe, puede tardar porque se comprimirá con FFmpeg.";
+      statusBox.innerHTML = `
+        <span class="status-warning">Descargando...</span><br>
+        No cierres esta pestaña. Si elegiste una calidad baja que no existe, puede tardar porque se comprimirá con FFmpeg.
+      `;
 
       const formData = new FormData(form);
 
@@ -375,101 +343,81 @@
         }
 
         const compressionText = result.compressed
-          ? `<br>Nota: el video fue comprimido a ${result.quality}p con FFmpeg.`
+          ? `<div class="hint">Nota: el video fue comprimido a ${result.quality}p con FFmpeg.</div>`
           : "";
 
         statusBox.innerHTML = `
-          Listo. Archivo:
-          <br>
-          <a href="${result.download_url}">
-            ${result.filename}
-          </a>
-          ${compressionText}
+          <div class="file-result">
+            <div class="file-label">Archivo listo:</div>
+            <div class="file-name">
+              <a href="${result.download_url}">
+                ${result.filename}
+              </a>
+            </div>
+
+            <div class="button-row">
+              <button type="button" class="button-secondary" onclick="openDownloadsFolder()">
+                Abrir carpeta downloads
+              </button>
+            </div>
+
+            ${compressionText}
+          </div>
         `;
       } catch (error) {
-        statusBox.textContent = "Error: " + error.message;
+        statusBox.innerHTML = `
+          <span class="status-danger">Error:</span><br>
+          ${error.message}
+        `;
       }
     });
 
-    function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+    updateButton.addEventListener("click", async () => {
+      const confirmed = confirm(
+        "¿Actualizar yt-dlp ahora?\n\nLa app se reiniciará y esta misma pestaña se recargará sola."
+      );
 
-async function waitForServerAndReload() {
-  await sleep(4000);
+      if (!confirmed) return;
 
-  for (let attempt = 1; attempt <= 30; attempt++) {
-    try {
-      const response = await fetch("/ytdlp-info?nocache=" + Date.now(), {
-        cache: "no-store"
-      });
+      setToolsDisabled(true);
+      toolStatus.innerHTML = `
+        <span class="status-warning">Actualizando yt-dlp...</span><br>
+        Cuando termine, la app se reiniciará sola.
+      `;
 
-      if (response.ok) {
+      try {
+        const response = await fetch("/update-ytdlp", {
+          method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.detail || "Error desconocido");
+        }
+
         toolStatus.innerHTML = `
-          Servidor reiniciado correctamente.<br>
-          Recargando esta pestaña...
+          <span class="status-good">yt-dlp actualizado a versión ${result.version}.</span><br>
+          Reiniciando servidor...
         `;
 
-        setTimeout(() => {
-          window.location.replace("/");
-        }, 800);
+        await waitForServerAndReload();
 
-        return;
+      } catch (error) {
+        toolStatus.innerHTML = `
+          <span class="status-danger">Error actualizando yt-dlp:</span><br>
+          ${error.message}
+        `;
+        setToolsDisabled(false);
       }
-    } catch (error) {
-      // Normal mientras el servidor se está reiniciando.
-    }
-
-    toolStatus.innerHTML = `
-      Reiniciando servidor... intento ${attempt}/30
-    `;
-
-    await sleep(1000);
-  }
-
-  toolStatus.innerHTML = `
-    No pude reconectar automáticamente.<br>
-    Presiona F5 o abre nuevamente la app con el acceso directo.
-  `;
-}
-
-updateButton.addEventListener("click", async () => {
-  const confirmed = confirm(
-    "¿Actualizar yt-dlp ahora?\n\nLa app se reiniciará y esta misma pestaña se recargará sola."
-  );
-
-  if (!confirmed) return;
-
-  setToolsDisabled(true);
-  toolStatus.textContent = "Actualizando yt-dlp... cuando termine, la app se reiniciará sola.";
-
-  try {
-    const response = await fetch("/update-ytdlp", {
-      method: "POST"
     });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.detail || "Error desconocido");
-    }
-
-    toolStatus.innerHTML = `
-      yt-dlp actualizado a versión: ${result.version}<br>
-      Reiniciando servidor...
-    `;
-
-    await waitForServerAndReload();
-
-  } catch (error) {
-    toolStatus.textContent = "Error actualizando yt-dlp: " + error.message;
-    setToolsDisabled(false);
-  }
-});
 
     backupButton.addEventListener("click", async () => {
       setToolsDisabled(true);
-      toolStatus.textContent = "Creando respaldo .zip... esto puede tardar varios minutos.";
+      toolStatus.innerHTML = `
+        <span class="status-warning">Creando respaldo .zip...</span><br>
+        Esto puede tardar varios minutos.
+      `;
 
       try {
         const response = await fetch("/backup-dependencies", {
@@ -483,7 +431,7 @@ updateButton.addEventListener("click", async () => {
         }
 
         toolStatus.innerHTML = `
-          Respaldo creado correctamente.<br>
+          <span class="status-good">Respaldo creado correctamente.</span><br>
           Archivo: ${result.filename}<br>
           Tamaño: ${result.size_mb} MB<br>
           Guardado en la carpeta <strong>backups/</strong> del proyecto.<br>
@@ -493,7 +441,10 @@ updateButton.addEventListener("click", async () => {
         await loadBackups();
 
       } catch (error) {
-        toolStatus.textContent = "Error creando respaldo: " + error.message;
+        toolStatus.innerHTML = `
+          <span class="status-danger">Error creando respaldo:</span><br>
+          ${error.message}
+        `;
       } finally {
         setToolsDisabled(false);
       }
@@ -511,10 +462,12 @@ updateButton.addEventListener("click", async () => {
           throw new Error(result.detail || "Error desconocido");
         }
 
-        toolStatus.textContent = result.message;
-
+        toolStatus.innerHTML = `<span class="status-good">${result.message}</span>`;
       } catch (error) {
-        toolStatus.textContent = "Error abriendo carpeta: " + error.message;
+        toolStatus.innerHTML = `
+          <span class="status-danger">Error abriendo carpeta backups:</span><br>
+          ${error.message}
+        `;
       }
     });
 
@@ -530,7 +483,10 @@ updateButton.addEventListener("click", async () => {
         if (!confirmed) return;
 
         setToolsDisabled(true);
-        toolStatus.textContent = "Restaurando respaldo... espera un momento.";
+        toolStatus.innerHTML = `
+          <span class="status-warning">Restaurando respaldo...</span><br>
+          Espera un momento.
+        `;
 
         const formData = new FormData();
         formData.append("filename", restoreFilename);
@@ -547,11 +503,17 @@ updateButton.addEventListener("click", async () => {
             throw new Error(result.detail || "Error desconocido");
           }
 
-          toolStatus.textContent = `Respaldo restaurado. yt-dlp actual: ${result.version}`;
+          toolStatus.innerHTML = `
+            <span class="status-good">Respaldo restaurado correctamente.</span><br>
+            yt-dlp actual: ${result.version}
+          `;
           await loadYtdlpInfo();
 
         } catch (error) {
-          toolStatus.textContent = "Error restaurando respaldo: " + error.message;
+          toolStatus.innerHTML = `
+            <span class="status-danger">Error restaurando respaldo:</span><br>
+            ${error.message}
+          `;
         } finally {
           setToolsDisabled(false);
         }
@@ -565,7 +527,9 @@ updateButton.addEventListener("click", async () => {
         if (!confirmed) return;
 
         setToolsDisabled(true);
-        toolStatus.textContent = "Eliminando respaldo...";
+        toolStatus.innerHTML = `
+          <span class="status-warning">Eliminando respaldo...</span>
+        `;
 
         const formData = new FormData();
         formData.append("filename", deleteFilename);
@@ -582,11 +546,14 @@ updateButton.addEventListener("click", async () => {
             throw new Error(result.detail || "Error desconocido");
           }
 
-          toolStatus.textContent = result.message;
+          toolStatus.innerHTML = `<span class="status-good">${result.message}</span>`;
           await loadBackups();
 
         } catch (error) {
-          toolStatus.textContent = "Error eliminando respaldo: " + error.message;
+          toolStatus.innerHTML = `
+            <span class="status-danger">Error eliminando respaldo:</span><br>
+            ${error.message}
+          `;
         } finally {
           setToolsDisabled(false);
         }

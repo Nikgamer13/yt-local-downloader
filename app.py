@@ -9,6 +9,7 @@ from urllib.parse import quote, urlparse
 import json
 import threading
 from urllib.request import urlopen
+from fastapi.staticfiles import StaticFiles
 
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
@@ -31,6 +32,8 @@ DOWNLOAD_DIR.mkdir(exist_ok=True)
 BACKUP_DIR.mkdir(exist_ok=True)
 
 app = FastAPI(title="Media Local Downloader")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 def get_ytdlp_version() -> str:
@@ -158,6 +161,14 @@ def is_allowed_media_url(url: str) -> bool:
         "www.tiktok.com",
         "vm.tiktok.com",
         "vt.tiktok.com",
+
+        # Twitter / X
+        "twitter.com",
+        "www.twitter.com",
+        "mobile.twitter.com",
+        "x.com",
+        "www.x.com",
+        "mobile.x.com",
     }
 
     return parsed.scheme in {"http", "https"} and domain in allowed_domains
@@ -552,20 +563,22 @@ def delete_backup(filename: str = Form(...)):
         )
 
 
-@app.post("/open-backup-folder")
-def open_backup_folder():
+@app.post("/open-download-folder")
+def open_download_folder():
     try:
-        if os.name == "nt":
-            os.startfile(BACKUP_DIR)
-        else:
-            subprocess.Popen(["xdg-open", str(BACKUP_DIR)])
+        DOWNLOAD_DIR.mkdir(exist_ok=True)
 
-        return {"message": "Carpeta de respaldos abierta."}
+        if os.name == "nt":
+            os.startfile(DOWNLOAD_DIR)
+        else:
+            subprocess.Popen(["xdg-open", str(DOWNLOAD_DIR)])
+
+        return {"message": "Carpeta de descargas abierta."}
 
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"No se pudo abrir la carpeta. Error: {str(error)}",
+            detail=f"No se pudo abrir la carpeta de descargas. Error: {str(error)}",
         )
 
 
@@ -578,7 +591,7 @@ def download(
     if not is_allowed_media_url(url):
         raise HTTPException(
             status_code=400,
-            detail="Por seguridad, esta versión solo acepta links de YouTube, Instagram o TikTok.",
+            detail="Por seguridad, esta versión solo acepta links de YouTube, Instagram, TikTok o Twitter/X.",
         )
 
     if mode not in {"audio", "video"}:
