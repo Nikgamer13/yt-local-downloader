@@ -35,21 +35,16 @@ El proyecto está pensado para ejecutarse en el propio computador, sin necesidad
 
 ## Requisitos
 
-Antes de usar la app, necesitas tener instalado:
+Para usar la app necesitas:
 
+- Windows.
+- Git, para clonar el repositorio.
 - Python 3.10 o superior.
-- Git.
 - FFmpeg.
 
-Para comprobar que FFmpeg está instalado correctamente:
+El archivo `setup_downloader.bat` puede intentar instalar Python y FFmpeg usando `winget` si no los encuentra.
 
-```bash
-ffmpeg -version
-```
-
-Si aparece información de versión, FFmpeg está funcionando.
-
-## Instalación
+## Instalación rápida en Windows
 
 Clona el repositorio:
 
@@ -57,6 +52,40 @@ Clona el repositorio:
 git clone https://github.com/Nikgamer13/yt-local-downloader.git
 cd yt-local-downloader
 ```
+
+Ejecuta el instalador inicial:
+
+```bash
+setup_downloader.bat
+```
+
+Este archivo prepara el proyecto localmente:
+
+- Busca Python.
+- Si no encuentra Python, pregunta si quieres instalarlo con `winget`.
+- Crea el entorno virtual `.venv/`.
+- Instala las dependencias desde `requirements.txt`.
+- Crea las carpetas `downloads/` y `backups/`.
+- Busca FFmpeg.
+- Si no encuentra FFmpeg, pregunta si quieres instalarlo con `winget`.
+
+## Uso
+
+Después de ejecutar el setup inicial, abre la app con:
+
+```bash
+start_downloader.bat
+```
+
+La app abrirá automáticamente el navegador en:
+
+```txt
+http://127.0.0.1:8000
+```
+
+## Instalación manual
+
+También puedes preparar el proyecto manualmente.
 
 Crea un entorno virtual:
 
@@ -76,21 +105,7 @@ Instala las dependencias:
 pip install -r requirements.txt
 ```
 
-## Uso
-
-Puedes iniciar la app ejecutando:
-
-```bash
-start_downloader.bat
-```
-
-La app abrirá automáticamente el navegador en:
-
-```txt
-http://127.0.0.1:8000
-```
-
-También puedes iniciarla manualmente con:
+Inicia la app manualmente:
 
 ```bash
 uvicorn app:app --host 127.0.0.1 --port 8000
@@ -104,6 +119,7 @@ yt-local-downloader/
 ├─ app.py
 ├─ requirements.txt
 ├─ README.md
+├─ setup_downloader.bat
 ├─ start_downloader.bat
 ├─ restart_downloader.bat
 ├─ .gitignore
@@ -134,6 +150,12 @@ Aquí se guardan los respaldos `.zip` de dependencias.
 Estos respaldos sirven para volver a una versión anterior funcional de yt-dlp si una actualización deja de funcionar correctamente.
 
 Esta carpeta tampoco se sube a GitHub.
+
+### `.venv/`
+
+Aquí queda el entorno virtual de Python creado por el setup.
+
+Esta carpeta no se sube a GitHub.
 
 ### `static/`
 
@@ -217,6 +239,7 @@ El proyecto no está pensado para publicarse como servicio abierto en internet.
 - HTML
 - CSS
 - JavaScript
+- Batch scripts
 
 ## Notas
 
